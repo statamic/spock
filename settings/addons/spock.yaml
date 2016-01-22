@@ -1,0 +1,3 @@
+# commands:
+#   - "git add {{ full_path }}"
+#   - "git commit -m '{{ url }} updated by {{ committer:username }}'"
