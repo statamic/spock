@@ -32,11 +32,26 @@ class SpockListener extends Listener
      */
     public function run($data)
     {
+        // Do nothing if we aren't supposed to run in this environment.
+        if (! $this->environmentWhitelisted()) {
+            return;
+        }
+
         $this->data = $data;
 
         $process = new Process($this->commands());
 
         $process->run();
+    }
+
+    /**
+     * Is the current environment whitelisted?
+     *
+     * @return bool
+     */
+    private function environmentWhitelisted()
+    {
+        return in_array(app()->environment(), $this->getConfig('environments', []));
     }
 
     /**
