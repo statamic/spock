@@ -1,9 +1,8 @@
 # Spock
-## Perform commands when content has been published.
 
-> Who better to listen for a publish event than a commander of the enterprise with the biggest ears?
+> Perform commands when content has been published.
 
-This addon is useful for automatically committing content.
+This addon essentially just listens for an event, and dispatches commands. Who better to listen and command than a Starship Commander with large ears?
 
 ## Installation
 1. Copy over the files into the `site` folder.
@@ -18,7 +17,7 @@ This addon is useful for automatically committing content.
   - A `committer` array which is the user that published the content. It contains all the user's data. `{{ committer:username }}`, etc.
 
 ## Example
-On publishing, we want to commit the page that was just edited, then push it.
+On publishing, we want to use git to commit the page that was just edited, then push it.
 
 ```
 commands:
