@@ -1,0 +1,6 @@
+name: Spock
+version: 0.1
+description: Perform commands when content has been published.
+developer: Statamic
+developer_url: https://statamic.com
+url: https://github.com/statamic/spock
