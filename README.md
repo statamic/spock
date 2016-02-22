@@ -1,6 +1,6 @@
-# Spock
+# Spock for Statamic ![Statamic 2.0](https://img.shields.io/badge/statamic-2.0-blue.svg?style=flat-square)
 
-> Perform commands when content has been published.
+Perform commands when content has been published.
 
 This addon essentially just listens for an event, and dispatches commands. Who better to listen and command than a Starship Commander with large ears?
 
