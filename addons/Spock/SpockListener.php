@@ -39,7 +39,7 @@ class SpockListener extends Listener
 
         $this->data = $data;
 
-        $process = new Process($this->commands());
+        $process = new Process($this->commands(), BASE);
 
         $process->run();
     }
