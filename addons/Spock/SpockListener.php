@@ -41,7 +41,23 @@ class SpockListener extends Listener
 
         $process = new Process($this->commands(), BASE);
 
-        $process->run();
+        // Log any exceptions when attempting to run the commands
+        try {
+            $process->run();
+        } catch (\Exception $e) {
+            \Log::error('Spock command hit an exception: ' . $this->commands());
+            \Log::error($e->getMessage());
+        }
+
+        // If the process did not exit successfully log the details
+        if ($process->getExitCode() != 0) {
+            \Log::error("Spock command exited unsuccessfully: ". PHP_EOL .
+                $this->commands() . PHP_EOL .
+                $process->getErrorOutput() . PHP_EOL .
+                $process->getOutput()
+            );
+        }
+        
     }
 
     /**
