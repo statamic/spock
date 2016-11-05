@@ -77,7 +77,13 @@ class SpockListener extends Listener
      */
     private function commands()
     {
-        $full_path = Path::assemble(root_path(), $this->data->path());
+        $folder = 'content';
+        if ($this->data instanceof \Statamic\Data\Users\User)
+        {
+            $folder = 'users';
+        }
+
+        $full_path = path(site_path($folder), $this->data->path());
 
         $data = $this->data->toArray();
         $data['full_path'] = $full_path;
