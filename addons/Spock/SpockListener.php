@@ -2,16 +2,17 @@
 
 namespace Statamic\Addons\Spock;
 
-use Statamic\API\Path;
-use Statamic\API\User;
+use League\Flysystem\Adapter\AbstractAdapter;
+use Statamic\API\File;
 use Statamic\API\Parse;
+use Statamic\API\User;
 use Statamic\Extend\Listener;
 use Symfony\Component\Process\Process;
 
 class SpockListener extends Listener
 {
     /**
-     * @var Statamic\Contracts\Data\Data
+     * @var \Statamic\Contracts\Data\Data
      */
     private $data;
 
@@ -27,7 +28,7 @@ class SpockListener extends Listener
     /**
      * Handle the event, run the command(s).
      *
-     * @param Statamic\Contracts\Data\Data $data
+     * @param \Statamic\Contracts\Data\Data $data
      * @return void
      */
     public function run($data)
@@ -57,7 +58,7 @@ class SpockListener extends Listener
                 $process->getOutput()
             );
         }
-        
+
     }
 
     /**
@@ -77,7 +78,15 @@ class SpockListener extends Listener
      */
     private function commands()
     {
-        $full_path = Path::assemble(root_path(), $this->data->path());
+        if ($this->data instanceof \Statamic\Data\Users\User) {
+            $disk = File::disk('users');
+        } else {
+            $disk = File::disk('content');
+        }
+
+        /** @var AbstractAdapter $adapter */
+        $adapter = $disk->filesystem()->getAdapter();
+        $full_path = $adapter->getPathPrefix() . $this->data->path();
 
         $data = $this->data->toArray();
         $data['full_path'] = $full_path;
