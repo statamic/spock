@@ -2,12 +2,12 @@
 
 namespace Statamic\Addons\Spock;
 
-use League\Flysystem\Adapter\AbstractAdapter;
 use Statamic\API\File;
 use Statamic\API\Parse;
-use Statamic\API\User;
 use Statamic\Extend\Listener;
+use Statamic\API\User as UserAPI;
 use Symfony\Component\Process\Process;
+use Statamic\Contracts\Data\Users\User;
 
 class SpockListener extends Listener
 {
@@ -78,19 +78,9 @@ class SpockListener extends Listener
      */
     private function commands()
     {
-        if ($this->data instanceof \Statamic\Data\Users\User) {
-            $disk = File::disk('users');
-        } else {
-            $disk = File::disk('content');
-        }
-
-        /** @var AbstractAdapter $adapter */
-        $adapter = $disk->filesystem()->getAdapter();
-        $full_path = $adapter->getPathPrefix() . $this->data->path();
-
         $data = $this->data->toArray();
-        $data['full_path'] = $full_path;
-        $data['committer'] = User::getCurrent()->toArray();
+        $data['full_path'] = $this->getPathPrefix() . $this->data->path();
+        $data['committer'] = UserAPI::getCurrent()->toArray();
 
         $commands = [];
 
@@ -99,5 +89,17 @@ class SpockListener extends Listener
         }
 
         return join('; ', $commands);
+    }
+
+    /**
+     * Get the prefix to the data's path.
+     *
+     * @return string
+     */
+    private function getPathPrefix()
+    {
+        $disk = $this->data instanceof User ? 'users' : 'content';
+
+        return File::disk($disk)->filesystem()->getAdapter()->getPathPrefix();
     }
 }
