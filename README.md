@@ -4,6 +4,8 @@ Perform commands when content has been published.
 
 This addon essentially just listens for an event, and dispatches commands. Who better to listen and command than a Starship Commander with large ears?
 
+Its primary use is to automatically commit and push changes in production, but it can do anything your command line can.
+
 ## Installation
 1. Copy over the files into the `site` folder.
 2. Update the `spock.yaml` `commands` array with a series of unix commands to run.
