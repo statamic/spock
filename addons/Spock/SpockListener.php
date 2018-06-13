@@ -4,10 +4,12 @@ namespace Statamic\Addons\Spock;
 
 use Statamic\API\File;
 use Statamic\API\Parse;
-use Statamic\Extend\Listener;
 use Statamic\API\User as UserAPI;
-use Symfony\Component\Process\Process;
+use Statamic\Assets\Asset;
 use Statamic\Contracts\Data\Users\User;
+use Statamic\Events\Data\AssetUploaded;
+use Statamic\Extend\Listener;
+use Symfony\Component\Process\Process;
 
 class SpockListener extends Listener
 {
@@ -22,7 +24,8 @@ class SpockListener extends Listener
      * @var array
      */
     public $events = [
-        'cp.published' => 'run'
+        'cp.published' => 'run',
+        AssetUploaded::class => 'runAsset',
     ];
 
     /**
@@ -62,6 +65,16 @@ class SpockListener extends Listener
     }
 
     /**
+     * Handle asset event.
+     *
+     * @param mixed $event
+     */
+    public function runAsset($event)
+    {
+        $this->run($event->asset);
+    }
+
+    /**
      * Is the current environment whitelisted?
      *
      * @return bool
@@ -72,14 +85,15 @@ class SpockListener extends Listener
     }
 
     /**
-     * Get the concat'ed commands
+     * Get the concat'ed commands.
      *
      * @return string
      */
     private function commands()
     {
         $data = $this->data->toArray();
-        $data['full_path'] = $this->getPathPrefix() . $this->data->path();
+
+        $data['full_path'] = $this->getFullPath();
         $data['committer'] = UserAPI::getCurrent()->toArray();
 
         $commands = [];
@@ -89,6 +103,20 @@ class SpockListener extends Listener
         }
 
         return join('; ', $commands);
+    }
+
+    /**
+     * Get the full path.
+     *
+     * @return string
+     */
+    private function getFullPath()
+    {
+        if ($this->data instanceof Asset) {
+            return $this->data->resolvedPath();
+        }
+
+        return $this->getPathPrefix() . $this->data->path();
     }
 
     /**
