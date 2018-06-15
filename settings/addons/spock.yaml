@@ -2,4 +2,4 @@ environments:
   - production
 # commands:
 #   - "git add {{ affected_paths join=' ' }}"
-#   - "git commit -m '{{ url }} updated by {{ committer:username }}'"
+#   - "git commit -m '{{ url }} updated by {{ user:username }}'"
