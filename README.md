@@ -15,9 +15,9 @@ Its primary use is to automatically commit and push changes in production, but i
 - The `commands` array must be an array of unix commands.
 - Make sure to surround your commands in quotes.
 - Each command will have access to:
-  - A `full_path` variable which will be the full path to the file that was just modified.
-  - All the data in the content you've published. `{{ title }}`, `{{ slug }}`, etc.
+  - An `affected_paths` array which will contain the full paths to the files that were just modified.
   - A `committer` array which is the user that published the content. It contains all the user's data. `{{ committer:username }}`, etc.
+  - Contextual data where possible. `{{ title }}`, `{{ slug }}`, etc.
 
 ## Whitelisting Environments
 If you will be using the CP to publish content from dev and production, but only want the commands to be run on
@@ -29,7 +29,7 @@ On publishing, we want to use git to commit the page that was just edited, then 
 
 ```
 commands:
-  - "git add {{ full_path }}"
+  - "git add {{ affected_paths join=' ' }}"
   - "git commit -m '{{ url }} updated by {{ committer:username }}'"
   - "git push"
 ```

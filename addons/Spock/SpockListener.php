@@ -83,9 +83,7 @@ class SpockListener extends Listener
     {
         $data = $this->event->contextualData();
 
-        \Log::info(count($this->event->affectedPaths())); // temporary!
-
-        $data['full_path'] = $this->event->affectedPaths()[0];
+        $data['affected_paths'] = $this->event->affectedPaths();
         $data['committer'] = UserAPI::getCurrent()->toArray();
 
         $commands = [];
