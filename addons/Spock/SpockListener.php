@@ -5,27 +5,26 @@ namespace Statamic\Addons\Spock;
 use Statamic\API\Parse;
 use Statamic\API\User as UserAPI;
 use Statamic\Contracts\Data\DataEvent;
-use Statamic\Events\Data\AssetUploaded;
-use Statamic\Events\Data\DataSaved;
 use Statamic\Extend\Listener;
 use Symfony\Component\Process\Process;
 
 class SpockListener extends Listener
 {
     /**
-     * @var DataEvent
-     */
-    private $event;
-
-    /**
      * Spock has no trouble listening for these events with those ears.
      *
      * @var array
      */
     public $events = [
-        DataSaved::class => 'run',
-        AssetUploaded::class => 'run',
+        \Statamic\Events\Data\DataSaved::class => 'run',
+        \Statamic\Events\Data\DataDeleted::class => 'run',
+        \Statamic\Events\Data\AssetUploaded::class => 'run',
     ];
+
+    /**
+     * @var DataEvent
+     */
+    private $event;
 
     /**
      * Handle the event, run the command(s).
@@ -84,6 +83,8 @@ class SpockListener extends Listener
     {
         $data = $this->event->contextualData();
 
+        \Log::info(count($this->event->affectedPaths())); // temporary!
+
         $data['full_path'] = $this->event->affectedPaths()[0];
         $data['committer'] = UserAPI::getCurrent()->toArray();
 
@@ -93,7 +94,7 @@ class SpockListener extends Listener
             $commands[] = Parse::template($command, $data);
         }
 
-        return \Log::info(join(';', $commands)); // temporary!
+        \Log::info(join(';', $commands)); // temporary!
 
         return join('; ', $commands);
     }
