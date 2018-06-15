@@ -2,21 +2,20 @@
 
 namespace Statamic\Addons\Spock;
 
-use Statamic\API\File;
 use Statamic\API\Parse;
 use Statamic\API\User as UserAPI;
-use Statamic\Assets\Asset;
-use Statamic\Contracts\Data\Users\User;
+use Statamic\Contracts\Data\DataEvent;
 use Statamic\Events\Data\AssetUploaded;
+use Statamic\Events\Data\DataSaved;
 use Statamic\Extend\Listener;
 use Symfony\Component\Process\Process;
 
 class SpockListener extends Listener
 {
     /**
-     * @var \Statamic\Contracts\Data\Data
+     * @var DataEvent
      */
-    private $data;
+    private $event;
 
     /**
      * Spock has no trouble listening for these events with those ears.
@@ -24,24 +23,26 @@ class SpockListener extends Listener
      * @var array
      */
     public $events = [
-        'cp.published' => 'run',
-        AssetUploaded::class => 'runAsset',
+        DataSaved::class => 'run',
+        AssetUploaded::class => 'run',
     ];
 
     /**
      * Handle the event, run the command(s).
      *
-     * @param \Statamic\Contracts\Data\Data $data
+     * @param DataEvent $event
      * @return void
      */
-    public function run($data)
+    public function run(DataEvent $event)
     {
         // Do nothing if we aren't supposed to run in this environment.
         if (! $this->environmentWhitelisted()) {
             return;
         }
 
-        $this->data = $data;
+        \Log::info('spock is running!'); // temporary!
+
+        $this->event = $event;
 
         $process = new Process($commands = $this->commands(), BASE);
 
@@ -65,16 +66,6 @@ class SpockListener extends Listener
     }
 
     /**
-     * Handle asset event.
-     *
-     * @param mixed $event
-     */
-    public function runAsset($event)
-    {
-        $this->run($event->asset);
-    }
-
-    /**
      * Is the current environment whitelisted?
      *
      * @return bool
@@ -91,9 +82,9 @@ class SpockListener extends Listener
      */
     private function commands()
     {
-        $data = $this->data->toArray();
+        $data = $this->event->contextualData();
 
-        $data['full_path'] = $this->getFullPath();
+        $data['full_path'] = $this->event->affectedPaths()[0];
         $data['committer'] = UserAPI::getCurrent()->toArray();
 
         $commands = [];
@@ -102,32 +93,8 @@ class SpockListener extends Listener
             $commands[] = Parse::template($command, $data);
         }
 
+        return \Log::info(join(';', $commands)); // temporary!
+
         return join('; ', $commands);
-    }
-
-    /**
-     * Get the full path.
-     *
-     * @return string
-     */
-    private function getFullPath()
-    {
-        if ($this->data instanceof Asset) {
-            return $this->data->resolvedPath();
-        }
-
-        return $this->getPathPrefix() . $this->data->path();
-    }
-
-    /**
-     * Get the prefix to the data's path.
-     *
-     * @return string
-     */
-    private function getPathPrefix()
-    {
-        $disk = $this->data instanceof User ? 'users' : 'content';
-
-        return File::disk($disk)->filesystem()->getAdapter()->getPathPrefix();
     }
 }
