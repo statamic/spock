@@ -20,6 +20,7 @@ class SpockListener extends Listener
         \Statamic\Events\Data\DataDeleted::class => 'run',
         \Statamic\Events\Data\AssetUploaded::class => 'run',
         \Statamic\Events\Data\AssetContainerSaved::class => 'run',
+        \Statamic\Events\Data\SubmissionSaved::class => 'run',
     ];
 
     /**
