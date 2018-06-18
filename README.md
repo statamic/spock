@@ -15,9 +15,10 @@ Its primary use is to automatically commit and push changes in production, but i
 - The `commands` array must be an array of unix commands.
 - Make sure to surround your commands in quotes.
 - Each command will have access to:
+  - A `listened_event` variable with the event name that was fired.
   - An `affected_paths` array which will contain the full paths to the files that were just modified.
-  - Contextual data where possible. `{{ title }}`, `{{ slug }}`, etc.
   - A `user` array which is the user that published or changed the content. It contains all the user's data. `{{ user:username }}`, etc.
+  - Contextual data relating to the content that was published or changed. `{{ title }}`, `{{ slug }}`, etc.
 
 ## Whitelisting Environments
 If you will be using the CP to publish content from dev and production, but only want the commands to be run on
