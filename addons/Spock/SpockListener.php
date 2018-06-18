@@ -19,6 +19,7 @@ class SpockListener extends Listener
         \Statamic\Events\Data\DataSaved::class => 'run',
         \Statamic\Events\Data\DataDeleted::class => 'run',
         \Statamic\Events\Data\AssetUploaded::class => 'run',
+        \Statamic\Events\Data\AssetDeleted::class => 'run',
         \Statamic\Events\Data\AssetContainerSaved::class => 'run',
         \Statamic\Events\Data\SubmissionSaved::class => 'run',
     ];
@@ -41,7 +42,7 @@ class SpockListener extends Listener
             return;
         }
 
-        \Log::info('spock is running!'); // temporary!
+        \Log::info('spock is running on event: ' . get_class($event)); // temporary!
 
         $this->event = $event;
 
