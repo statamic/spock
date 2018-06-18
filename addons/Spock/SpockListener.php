@@ -2,6 +2,7 @@
 
 namespace Statamic\Addons\Spock;
 
+use ReflectionClass;
 use Statamic\API\Parse;
 use Statamic\API\User as UserAPI;
 use Statamic\Contracts\Data\DataEvent;
@@ -41,8 +42,6 @@ class SpockListener extends Listener
         if (! $this->environmentWhitelisted()) {
             return;
         }
-
-        \Log::info('spock is running on event: ' . get_class($event)); // temporary!
 
         $this->event = $event;
 
@@ -88,15 +87,10 @@ class SpockListener extends Listener
 
         $data['affected_paths'] = $this->event->affectedPaths();
         $data['user'] = UserAPI::getCurrent()->toArray();
+        $data['listened_event'] = (new ReflectionClass($this->event))->getShortName();
 
-        $commands = [];
-
-        foreach ($this->getConfig('commands', []) as $command) {
-            $commands[] = Parse::template($command, $data);
-        }
-
-        \Log::info(join(';', $commands)); // temporary!
-
-        return join('; ', $commands);
+        return collect($this->getConfig('commands', []))->map(function ($command) use ($data) {
+            return Parse::template($command, $data);
+        })->implode('; ');
     }
 }
