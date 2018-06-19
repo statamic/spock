@@ -19,6 +19,7 @@ class SpockListener extends Listener
     public $events = [
         \Statamic\Events\Data\DataSaved::class => 'run',
         \Statamic\Events\Data\DataDeleted::class => 'run',
+        \Statamic\Events\Data\PageMoved::class => 'run',
         \Statamic\Events\Data\AssetUploaded::class => 'run',
         \Statamic\Events\Data\AssetMoved::class => 'run',
         \Statamic\Events\Data\AssetDeleted::class => 'run',
