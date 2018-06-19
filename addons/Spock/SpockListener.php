@@ -4,7 +4,7 @@ namespace Statamic\Addons\Spock;
 
 use ReflectionClass;
 use Statamic\API\Parse;
-use Statamic\API\User as UserAPI;
+use Statamic\API\User;
 use Statamic\Contracts\Data\DataEvent;
 use Statamic\Extend\Listener;
 use Symfony\Component\Process\Process;
@@ -92,7 +92,7 @@ class SpockListener extends Listener
         $data = $this->event->contextualData();
 
         $data['affected_paths'] = $this->event->affectedPaths();
-        $data['user'] = UserAPI::getCurrent()->toArray();
+        $data['user'] = User::getCurrent()->toArray();
         $data['listened_event'] = (new ReflectionClass($this->event))->getShortName();
 
         return collect($this->getConfig('commands', []))->map(function ($command) use ($data) {
