@@ -2,5 +2,5 @@ environments:
   - production
 # commands:
 #   - "git add {{ affected_paths join=' ' }}"
-#   - "git commit -m '{{ listened_event }}: {{ url }} updated by {{ user:username }}'"
+#   - "git commit -m '{{ listened_event }} update by {{ user:username }}'"
 #   - "git push"

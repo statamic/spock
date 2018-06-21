@@ -31,6 +31,6 @@ On publishing, we want to use git to commit the page that was just edited, then 
 ```
 commands:
   - "git add {{ affected_paths join=' ' }}"
-  - "git commit -m '{{ listened_event }}: {{ url }} updated by {{ user:username }}'"
+  - "git commit -m '{{ listened_event }} update by {{ user:username }}'"
   - "git push"
 ```
