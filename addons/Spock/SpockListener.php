@@ -41,6 +41,8 @@ class SpockListener extends Listener
         \Statamic\Events\Data\UserDeleted::class => 'run',
         \Statamic\Events\Data\UserGroupSaved::class => 'run',
         \Statamic\Events\Data\UserGroupDeleted::class => 'run',
+        \Statamic\Events\Data\RoleSaved::class => 'run',
+        \Statamic\Events\Data\RoleDeleted::class => 'run',
     ];
 
     /**
