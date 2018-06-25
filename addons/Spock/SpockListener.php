@@ -2,59 +2,89 @@
 
 namespace Statamic\Addons\Spock;
 
-use Statamic\API\File;
+use ReflectionClass;
 use Statamic\API\Parse;
+use Statamic\API\User;
+use Statamic\Contracts\Data\DataEvent;
 use Statamic\Extend\Listener;
-use Statamic\API\User as UserAPI;
 use Symfony\Component\Process\Process;
-use Statamic\Contracts\Data\Users\User;
 
 class SpockListener extends Listener
 {
-    /**
-     * @var \Statamic\Contracts\Data\Data
-     */
-    private $data;
-
     /**
      * Spock has no trouble listening for these events with those ears.
      *
      * @var array
      */
     public $events = [
-        'cp.published' => 'run'
+        \Statamic\Events\Data\DataSaved::class => 'run',
+        \Statamic\Events\Data\DataDeleted::class => 'run',
+        \Statamic\Events\Data\PagesMoved::class => 'run',
+        \Statamic\Events\Data\AssetUploaded::class => 'run',
+        \Statamic\Events\Data\AssetMoved::class => 'run',
+        \Statamic\Events\Data\AssetDeleted::class => 'run',
+        \Statamic\Events\Data\AssetContainerSaved::class => 'run',
+        \Statamic\Events\Data\AssetContainerDeleted::class => 'run',
+        \Statamic\Events\Data\AssetFolderSaved::class => 'run',
+        \Statamic\Events\Data\AssetFolderDeleted::class => 'run',
+        \Statamic\Events\Data\FileUploaded::class => 'run',
+        \Statamic\Events\Data\SubmissionSaved::class => 'run',
+        \Statamic\Events\Data\SubmissionDeleted::class => 'run',
+        \Statamic\Events\Data\CollectionSaved::class => 'run',
+        \Statamic\Events\Data\CollectionDeleted::class => 'run',
+        \Statamic\Events\Data\TaxonomySaved::class => 'run',
+        \Statamic\Events\Data\TaxonomyDeleted::class => 'run',
+        \Statamic\Events\Data\FieldsetSaved::class => 'run',
+        \Statamic\Events\Data\FieldsetDeleted::class => 'run',
+        \Statamic\Events\Data\SettingsSaved::class => 'run',
+        \Statamic\Events\Data\UserSaved::class => 'run',
+        \Statamic\Events\Data\UserDeleted::class => 'run',
+        \Statamic\Events\Data\UserGroupSaved::class => 'run',
+        \Statamic\Events\Data\UserGroupDeleted::class => 'run',
+        \Statamic\Events\Data\RoleSaved::class => 'run',
+        \Statamic\Events\Data\RoleDeleted::class => 'run',
     ];
+
+    /**
+     * @var DataEvent
+     */
+    private $event;
 
     /**
      * Handle the event, run the command(s).
      *
-     * @param \Statamic\Contracts\Data\Data $data
+     * @param DataEvent $event
      * @return void
      */
-    public function run($data)
+    public function run(DataEvent $event)
     {
         // Do nothing if we aren't supposed to run in this environment.
         if (! $this->environmentWhitelisted()) {
             return;
         }
 
-        $this->data = $data;
+        // Store and log event.
+        $this->event = $event;
+        \Log::info('Spock is running on event: ' . get_class($event));
 
+        // Setup command process.
         $process = new Process($commands = $this->commands(), BASE);
 
-        // Log any exceptions when attempting to run the commands
+        // Attempt running command process.
         try {
+            \Log::info('Spock is attempting the following commands: ' . $commands);
             $process->run();
         } catch (\Exception $e) {
-            \Log::error('Spock command hit an exception: ' . $commands);
-            \Log::error($e->getMessage());
+            \Log::error(
+                'Spock command threw an exception: ' . PHP_EOL .
+                $e->getMessage()
+            );
         }
 
-        // If the process did not exit successfully log the details
+        // Log if the process exited unsuccessfully.
         if ($process->getExitCode() != 0) {
             \Log::error(
-                "Spock command exited unsuccessfully: ". PHP_EOL .
-                $commands . PHP_EOL .
+                'Spock command exited unsuccessfully:' . PHP_EOL .
                 $process->getErrorOutput() . PHP_EOL .
                 $process->getOutput()
             );
@@ -72,34 +102,20 @@ class SpockListener extends Listener
     }
 
     /**
-     * Get the concat'ed commands
+     * Get the concat'ed commands.
      *
      * @return string
      */
     private function commands()
     {
-        $data = $this->data->toArray();
-        $data['full_path'] = $this->getPathPrefix() . $this->data->path();
-        $data['committer'] = UserAPI::getCurrent()->toArray();
+        $data = $this->event->contextualData();
 
-        $commands = [];
+        $data['affected_paths'] = $this->event->affectedPaths();
+        $data['user'] = User::getCurrent()->toArray();
+        $data['listened_event'] = (new ReflectionClass($this->event))->getShortName();
 
-        foreach ($this->getConfig('commands', []) as $command) {
-            $commands[] = Parse::template($command, $data);
-        }
-
-        return join('; ', $commands);
-    }
-
-    /**
-     * Get the prefix to the data's path.
-     *
-     * @return string
-     */
-    private function getPathPrefix()
-    {
-        $disk = $this->data instanceof User ? 'users' : 'content';
-
-        return File::disk($disk)->filesystem()->getAdapter()->getPathPrefix();
+        return collect($this->getConfig('commands', []))->map(function ($command) use ($data) {
+            return Parse::template($command, $data);
+        })->implode('; ');
     }
 }

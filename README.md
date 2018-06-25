@@ -1,6 +1,6 @@
 # Spock for Statamic ![Statamic 2.0](https://img.shields.io/badge/statamic-2.0-blue.svg?style=flat-square)
 
-Perform commands when content has been published.
+Perform commands when content has been published or changed.
 
 This addon essentially just listens for an event, and dispatches commands. Who better to listen and command than a Starship Commander with large ears?
 
@@ -15,9 +15,10 @@ Its primary use is to automatically commit and push changes in production, but i
 - The `commands` array must be an array of unix commands.
 - Make sure to surround your commands in quotes.
 - Each command will have access to:
-  - A `full_path` variable which will be the full path to the file that was just modified.
-  - All the data in the content you've published. `{{ title }}`, `{{ slug }}`, etc.
-  - A `committer` array which is the user that published the content. It contains all the user's data. `{{ committer:username }}`, etc.
+  - A `listened_event` variable with the event name that was fired.
+  - An `affected_paths` array which will contain the full paths to the files that were just modified.
+  - A `user` array which is the user that published or changed the content. It contains all the user's data. `{{ user:username }}`, etc.
+  - Contextual data relating to the content that was published or changed. `{{ title }}`, `{{ slug }}`, etc.
 
 ## Whitelisting Environments
 If you will be using the CP to publish content from dev and production, but only want the commands to be run on
@@ -29,7 +30,7 @@ On publishing, we want to use git to commit the page that was just edited, then 
 
 ```
 commands:
-  - "git add {{ full_path }}"
-  - "git commit -m '{{ url }} updated by {{ committer:username }}'"
+  - "git add {{ affected_paths join=' ' }}"
+  - "git commit -m '{{ listened_event }} update by {{ user:username }}'"
   - "git push"
 ```
