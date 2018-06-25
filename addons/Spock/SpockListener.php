@@ -2,12 +2,9 @@
 
 namespace Statamic\Addons\Spock;
 
-use ReflectionClass;
-use Statamic\API\Parse;
 use Statamic\API\User;
-use Statamic\Contracts\Data\DataEvent;
 use Statamic\Extend\Listener;
-use Symfony\Component\Process\Process;
+use Statamic\Contracts\Data\DataEvent;
 
 class SpockListener extends Listener
 {
@@ -46,11 +43,6 @@ class SpockListener extends Listener
     ];
 
     /**
-     * @var DataEvent
-     */
-    private $event;
-
-    /**
      * Handle the event, run the command(s).
      *
      * @param DataEvent $event
@@ -58,64 +50,11 @@ class SpockListener extends Listener
      */
     public function run(DataEvent $event)
     {
-        // Do nothing if we aren't supposed to run in this environment.
-        if (! $this->environmentWhitelisted()) {
-            return;
-        }
-
-        // Store and log event.
-        $this->event = $event;
-        \Log::info('Spock is running on event: ' . get_class($event));
-
-        // Setup command process.
-        $process = new Process($commands = $this->commands(), BASE);
-
-        // Attempt running command process.
-        try {
-            \Log::info('Spock is attempting the following commands: ' . $commands);
-            $process->run();
-        } catch (\Exception $e) {
-            \Log::error(
-                'Spock command threw an exception: ' . PHP_EOL .
-                $e->getMessage()
-            );
-        }
-
-        // Log if the process exited unsuccessfully.
-        if ($process->getExitCode() != 0) {
-            \Log::error(
-                'Spock command exited unsuccessfully:' . PHP_EOL .
-                $process->getErrorOutput() . PHP_EOL .
-                $process->getOutput()
-            );
-        }
-    }
-
-    /**
-     * Is the current environment whitelisted?
-     *
-     * @return bool
-     */
-    private function environmentWhitelisted()
-    {
-        return in_array(app()->environment(), $this->getConfig('environments', []));
-    }
-
-    /**
-     * Get the concat'ed commands.
-     *
-     * @return string
-     */
-    private function commands()
-    {
-        $data = $this->event->contextualData();
-
-        $data['affected_paths'] = $this->event->affectedPaths();
-        $data['user'] = User::getCurrent()->toArray();
-        $data['listened_event'] = (new ReflectionClass($this->event))->getShortName();
-
-        return collect($this->getConfig('commands', []))->map(function ($command) use ($data) {
-            return Parse::template($command, $data);
-        })->implode('; ');
+        app(Commander::class)
+            ->event($event)
+            ->user(User::getCurrent())
+            ->config($this->getConfig())
+            ->environment(app()->environment())
+            ->handle();
     }
 }
