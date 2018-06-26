@@ -30,7 +30,7 @@ class Git
      */
     public function commands()
     {
-        $commands = [];
+        $commands = array_get($this->config, 'commands_before', []);
 
         foreach ($this->event->affectedPaths() as $path) {
             $commands[] = "git add {$path}";
@@ -40,6 +40,10 @@ class Git
 
         if (array_get($this->config, 'git_push', false)) {
             $commands[] = 'git push';
+        }
+
+        if ($after = array_get($this->config, 'commands_after', [])) {
+            $commands = array_merge($commands, $after);
         }
 
         return $commands;

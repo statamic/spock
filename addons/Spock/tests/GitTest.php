@@ -39,6 +39,44 @@ class GitTest extends \PHPUnit_Framework_TestCase
             'git push',
         ], $git->commands());
     }
+
+    /** @test */
+    function it_adds_commands_before_if_specified_in_config()
+    {
+        $user = Mockery::mock(User::class);
+        $user->shouldReceive('username')->andReturn('johnsmith');
+
+        $git = new Git([
+            'commands_before' => ['echo one', 'echo two'],
+        ], new DataSaved, $user);
+
+        $this->assertEquals([
+            'echo one',
+            'echo two',
+            'git add one.txt',
+            'git add two.txt',
+            "git commit -m 'Data saved by johnsmith'",
+        ], $git->commands());
+    }
+
+    /** @test */
+    function it_adds_commands_after_if_specified_in_config()
+    {
+        $user = Mockery::mock(User::class);
+        $user->shouldReceive('username')->andReturn('johnsmith');
+
+        $git = new Git([
+            'commands_after' => ['echo one', 'echo two'],
+        ], new DataSaved, $user);
+
+        $this->assertEquals([
+            'git add one.txt',
+            'git add two.txt',
+            "git commit -m 'Data saved by johnsmith'",
+            'echo one',
+            'echo two',
+        ], $git->commands());
+    }
 }
 
 class DataSaved
