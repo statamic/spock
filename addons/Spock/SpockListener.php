@@ -50,7 +50,7 @@ class SpockListener extends Listener
      */
     public function run(DataEvent $event)
     {
-        app(Commander::class)
+        app('spock')
             ->event($event)
             ->user(User::getCurrent())
             ->handle();

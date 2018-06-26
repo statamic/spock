@@ -13,5 +13,7 @@ class SpockServiceProvider extends ServiceProvider
                 ->config($this->getConfig())
                 ->environment($this->app->environment());
         });
+
+        $this->app->alias(Commander::class, 'spock');
     }
 }
