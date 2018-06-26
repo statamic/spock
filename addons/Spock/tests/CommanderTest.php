@@ -87,4 +87,28 @@ class CommanderTest extends \PHPUnit_Framework_TestCase
                 && str_contains($argument, trim($process->getErrorOutput()));
         }));
     }
+
+    /** @test */
+    function commands_can_be_a_closure()
+    {
+        $this->commander->event(new class {
+            public function foo() {
+                return 'bar';
+            }
+        });
+
+        $this->commander->setCommands(function ($commander) {
+            return [
+                'hardcoded command',
+                'dynamic command ' . $commander->event()->foo()
+            ];
+        });
+
+        $commands = $this->commander->commands();
+
+        $this->assertEquals([
+            new Process('hardcoded command'),
+            new Process('dynamic command bar'),
+        ], $commands);
+    }
 }

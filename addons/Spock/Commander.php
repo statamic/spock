@@ -123,6 +123,10 @@ class Commander
     {
         $commands = $this->commands ?: $this->defaultCommands();
 
+        if ($commands instanceof \Closure) {
+            $commands = $commands($this);
+        }
+
         return array_map(function ($command) {
             return ($command instanceof Process) ? $command : new Process($command);
         }, $commands);
