@@ -50,6 +50,16 @@ class CommanderTest extends \PHPUnit_Framework_TestCase
     }
 
     /** @test */
+    function a_command_as_a_string_is_converted_to_an_array()
+    {
+        $this->commander->setCommands('string');
+
+        $this->assertEquals([
+            new Process('string'),
+        ], $this->commander->commands());
+    }
+
+    /** @test */
     function commands_are_run()
     {
         $this->commander->setCommands([

@@ -127,6 +127,10 @@ class Commander
             $commands = $commands($this);
         }
 
+        if (is_string($commands)) {
+            $commands = [$commands];
+        }
+
         return array_map(function ($command) {
             return ($command instanceof Process) ? $command : new Process($command);
         }, $commands);
