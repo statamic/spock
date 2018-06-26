@@ -53,8 +53,6 @@ class SpockListener extends Listener
         app(Commander::class)
             ->event($event)
             ->user(User::getCurrent())
-            ->config($this->getConfig())
-            ->environment(app()->environment())
             ->handle();
     }
 }
