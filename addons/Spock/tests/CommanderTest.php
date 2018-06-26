@@ -5,6 +5,7 @@ namespace Statamic\Addons\Spock;
 use Mockery;
 use Illuminate\Contracts\Logging\Log;
 use Symfony\Component\Process\Process as SymfonyProcess;
+use Symfony\Component\Process\Exception\ProcessFailedException;
 
 class CommanderTest extends \PHPUnit_Framework_TestCase
 {
