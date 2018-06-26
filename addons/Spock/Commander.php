@@ -53,13 +53,17 @@ class Commander
     }
 
     /**
-     * Set the event.
+     * Get or set the event.
      *
      * @param string $event
      * @return self
      */
-    public function event($event)
+    public function event($event = null)
     {
+        if (! $event) {
+            return $this->event;
+        }
+
         $this->event = $event;
 
         return $this;
