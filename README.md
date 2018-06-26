@@ -7,30 +7,71 @@ This addon essentially just listens for an event, and dispatches commands. Who b
 Its primary use is to automatically commit and push changes in production, but it can do anything your command line can.
 
 ## Installation
-1. Copy over the files into the `site` folder.
-2. Update the `spock.yaml` `commands` array with a series of unix commands to run.
-3. Ensure the `environments` array contains the environment(s) you want Spock commands in.
+1. Copy the `addons/Spock` directory into `site/addons`.
+2. In `site/settings/addons/spock.yaml`, ensure the `environments` array contains the environment(s) you want Spock commands in. By default, commands are only run in `production`.
 
 ## Commands
-- The `commands` array must be an array of unix commands.
-- Make sure to surround your commands in quotes.
-- Each command will have access to:
-  - A `listened_event` variable with the event name that was fired.
-  - An `affected_paths` array which will contain the full paths to the files that were just modified.
-  - A `user` array which is the user that published or changed the content. It contains all the user's data. `{{ user:username }}`, etc.
-  - Contextual data relating to the content that was published or changed. `{{ title }}`, `{{ slug }}`, etc.
+Out of the box, Spock will perform a few git commands to stage, commit, and push any affected files.
+
+Basically, it will do this:
+
+``` bash
+# Any `commands_before` will be run here
+# ...
+
+# Each affected file will be staged in a separate command
+git add modified_file.md
+git add another_modified_file.md
+git add deleted_file.md
+
+git commit -m "Data saved by bob"  # or Fieldset saved, Asset uploaded, etc...
+git push
+
+# Any `commands_after` will be run here
+# ...
+```
+
+You may disable `git push`-ing in your `spock.yaml`.
+
+``` yaml
+git_push: false
+```
+
+You may add hardcoded commands before or after the git commands by adding `commands_before` and/or `commands_after` to your `spock.yaml`:
+
+``` yaml
+commands_before:
+  - some-unix-command
+commands_after:
+  - another-unix-command
+```
+
+## Custom commands
+The Git workflow Spock provides out of the box works fine for most people, but if you have special requirements, you may define your own set of commands. You can do this in a service provider like so:
+
+``` php
+class YourServiceProvider extends ServiceProvider
+{
+    public function boot()
+    {
+        // As a string, for a single command:
+        app('spock')->setCommands('some-command');
+
+        // As an array for basic commands:
+        app('spock')->setCommands(['command one', 'command two']);
+
+        // A closure that returns an array of commands.
+        // The first argument will be an instance of the `Commander` class. 
+        app('spock')->setCommands(function ($spock) {
+            $paths = $spock->event()->affectedPaths();
+            //
+            return [ ];
+        });
+    }
+}
+```
 
 ## Whitelisting Environments
 If you will be using the CP to publish content from dev and production, but only want the commands to be run on
 production, you should make sure the `environments` array contains only `production`. Spock will do nothing
 when its running in any other environments.
-
-## Example
-On publishing, we want to use git to commit the page that was just edited, then push it.
-
-```
-commands:
-  - "git add {{ affected_paths join=' ' }}"
-  - "git commit -m '{{ listened_event }} update by {{ user:username }}'"
-  - "git push"
-```
