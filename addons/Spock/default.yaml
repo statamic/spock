@@ -1,0 +1,7 @@
+# The names of the environments on which commands should be enabled.
+# If you're on an environment not listed here, nothing will happen.
+environments:
+  - production
+
+# Whether the default git setup include `git push` after committing.
+git_push: true
