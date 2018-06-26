@@ -17,16 +17,17 @@ git add another_modified_file.md
 git add deleted_file.md
 
 git commit -m "Data saved by bob"  # or Fieldset saved, Asset uploaded, etc...
-git push
+
+git push  # this is opt-in
 
 # Any `commands_after` will be run here
 # ...
 ```
 
-You may disable `git push`-ing in your `spock.yaml`.
+You may enable `git push`-ing in your `spock.yaml`.
 
 ``` yaml
-git_push: false
+git_push: true
 ```
 
 You may add hardcoded commands before or after the git commands by adding `commands_before` and/or `commands_after` to your `spock.yaml`:

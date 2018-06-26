@@ -38,7 +38,7 @@ class Git
 
         $commands[] = sprintf("git commit -m '%s by %s'", $this->label(), $this->user->username());
 
-        if (array_get($this->config, 'git_push', false)) {
+        if (array_get($this->config, 'git_push')) {
             $commands[] = 'git push';
         }
 

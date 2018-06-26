@@ -3,5 +3,5 @@
 environments:
   - production
 
-# Whether the default git setup include `git push` after committing.
-git_push: true
+# Whether the default git setup includes `git push` after committing.
+git_push: false
