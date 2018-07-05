@@ -172,10 +172,13 @@ class Commander
         $output = trim($e->getProcess()->getOutput());
         $output = $output == '' ? 'No output' : "\n$output\n";
 
-        $this->log->error(vsprintf("Spock command exited unsuccessfully:\nCommand: %s\nOutput: %s\nError:\n%s", [
+        $error = trim($e->getProcess()->getErrorOutput());
+        $error = $error == '' ? 'No error' : "\n$error";
+
+        $this->log->error(vsprintf("Spock command exited unsuccessfully:\nCommand: %s\nOutput: %s\nError: %s", [
             $command->command(),
             $output,
-            trim($e->getProcess()->getErrorOutput())
+            $error
         ]));
     }
 }
