@@ -1,0 +1,13 @@
+fields:
+  environments:
+    type: tags
+  git_push:
+    type: toggle
+  commands_before:
+    type: list
+    width: 50
+  commands_after:
+    type: list
+    width: 50
+  ignore_events:
+    type: list
