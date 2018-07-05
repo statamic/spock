@@ -161,13 +161,18 @@ class Commander
         try {
             $command->run();
         } catch (ProcessFailedException $e) {
-            $this->log->error(vsprintf("Spock command exited unsuccessfully:\nCommand: %s\nOutput:\n%s\n\nError:\n%s", [
-                $command->command(),
-                trim($e->getProcess()->getOutput()),
-                trim($e->getProcess()->getErrorOutput())
-            ]));
+            $this->logFailedCommand($command, $e);
         } catch (\Exception $e) {
             $this->log->error($e);
         }
+    }
+
+    protected function logFailedCommand($command, $e)
+    {
+        $this->log->error(vsprintf("Spock command exited unsuccessfully:\nCommand: %s\nOutput:\n%s\n\nError:\n%s", [
+            $command->command(),
+            trim($e->getProcess()->getOutput()),
+            trim($e->getProcess()->getErrorOutput())
+        ]));
     }
 }
