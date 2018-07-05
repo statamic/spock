@@ -86,10 +86,12 @@ class CommanderTest extends \PHPUnit_Framework_TestCase
     function failed_commands_are_logged()
     {
         $failingProcess = Mockery::mock(Process::class);
-        $process = new SymfonyProcess('echo "some output"; nonexistingcommandIhopeneversomeonewouldnameacommandlikethis');
+        $command = 'echo "some output"; nonexistingcommandIhopeneversomeonewouldnameacommandlikethis';
+        $process = new SymfonyProcess($command);
         $process->run();
         $e = new ProcessFailedException($process);
         $failingProcess->shouldReceive('run')->andThrow($e);
+        $failingProcess->shouldReceive('command')->andReturn($command);
 
         $this->commander->setCommands([$failingProcess])->handle();
 

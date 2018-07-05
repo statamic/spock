@@ -26,4 +26,14 @@ class Process
     {
         (new SymfonyProcess($this->command, BASE))->mustRun();
     }
+
+    /**
+     * Get the command line to be run.
+     *
+     * @return string
+     */
+    public function command()
+    {
+        return $this->command;
+    }
 }
