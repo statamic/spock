@@ -14,6 +14,7 @@ class SpockListener extends Listener
      * @var array
      */
     public $events = [
+        \Statamic\Events\Data\AddonSettingsSaved::class => 'run',
         \Statamic\Events\Data\AssetUploaded::class => 'run',
         \Statamic\Events\Data\AssetMoved::class => 'run',
         \Statamic\Events\Data\AssetDeleted::class => 'run',
