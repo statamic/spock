@@ -1,4 +1,4 @@
-# Spock for Statamic ![Statamic 2.0](https://img.shields.io/badge/statamic-2.0-blue.svg?style=flat-square)
+# Spock for Statamic ![Statamic 2.10](https://img.shields.io/badge/statamic-2.10-blue.svg?style=flat-square)
 
 Perform commands when content has been published or changed.
 
