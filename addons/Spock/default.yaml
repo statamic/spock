@@ -10,3 +10,8 @@ git_push: false
 # For example, you may want to ignore Statamic\Events\Data\UserSaved
 # if you're gitignoring the users directory.
 ignore_events: []
+
+# Extra commands to be run before and after the default git commands.
+# When customizing the Spock commands, these are ignored.
+commands_before: []
+commands_after: []
