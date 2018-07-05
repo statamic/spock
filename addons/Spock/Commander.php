@@ -169,9 +169,12 @@ class Commander
 
     protected function logFailedCommand($command, $e)
     {
-        $this->log->error(vsprintf("Spock command exited unsuccessfully:\nCommand: %s\nOutput:\n%s\n\nError:\n%s", [
+        $output = trim($e->getProcess()->getOutput());
+        $output = $output == '' ? 'No output' : "\n$output\n";
+
+        $this->log->error(vsprintf("Spock command exited unsuccessfully:\nCommand: %s\nOutput: %s\nError:\n%s", [
             $command->command(),
-            trim($e->getProcess()->getOutput()),
+            $output,
             trim($e->getProcess()->getErrorOutput())
         ]));
     }

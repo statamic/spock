@@ -102,6 +102,25 @@ class CommanderTest extends \PHPUnit_Framework_TestCase
     }
 
     /** @test */
+    function the_literal_string_no_output_is_shown_if_theres_no_output()
+    {
+        $failingProcess = Mockery::mock(Process::class);
+        $command = 'nonexistingcommandIhopeneversomeonewouldnameacommandlikethis';
+        $process = new SymfonyProcess($command);
+        $process->run();
+        $e = new ProcessFailedException($process);
+        $failingProcess->shouldReceive('run')->andThrow($e);
+        $failingProcess->shouldReceive('command')->andReturn($command);
+
+        $this->commander->setCommands([$failingProcess])->handle();
+
+        $this->log->shouldHaveReceived('error')->with(Mockery::on(function ($argument) use ($process) {
+            return str_contains($argument, 'Output: No output')
+                && str_contains($argument, trim($process->getErrorOutput()));
+        }));
+    }
+
+    /** @test */
     function commands_can_be_a_closure()
     {
         $this->commander->event(new class {
