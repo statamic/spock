@@ -5,3 +5,8 @@ environments:
 
 # Whether the default git setup includes `git push` after committing.
 git_push: false
+
+# Class names of events to ignore.
+# For example, you may want to ignore Statamic\Events\Data\UserSaved
+# if you're gitignoring the users directory.
+ignore_events: []

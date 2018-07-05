@@ -38,6 +38,23 @@ class CommanderTest extends \PHPUnit_Framework_TestCase
     }
 
     /** @test */
+    function does_not_run_command_if_event_is_ignored()
+    {
+        $this->commander->environment('production')->config([
+            'environments' => ['production'],
+            'ignore_events' => [ExampleIgnoredEvent::class]
+        ]);
+
+        $this->assertTrue($this->commander->shouldRunCommands());
+
+        $this->commander->event(new ExampleEvent);
+        $this->assertTrue($this->commander->shouldRunCommands());
+
+        $this->commander->event(new ExampleIgnoredEvent);
+        $this->assertFalse($this->commander->shouldRunCommands());
+    }
+
+    /** @test */
     function command_strings_are_converted_to_objects()
     {
         $commands = ['echo one', 'echo two'];
@@ -162,4 +179,14 @@ class CommanderTest extends \PHPUnit_Framework_TestCase
             new Process('dynamic command bar'),
         ], $commands);
     }
+}
+
+class ExampleEvent
+{
+    //
+}
+
+class ExampleIgnoredEvent
+{
+    //
 }

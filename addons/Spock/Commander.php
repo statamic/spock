@@ -96,13 +96,23 @@ class Commander
     }
 
     /**
-     * Whether the commands should be run in this environment.
+     * Whether the commands should be run.
      *
      * @return bool
      */
     public function shouldRunCommands()
     {
+        return $this->isEnvironmentAllowed() && $this->isEventAllowed();
+    }
+
+    protected function isEnvironmentAllowed()
+    {
         return in_array($this->environment, array_get($this->config, 'environments', []));
+    }
+
+    protected function isEventAllowed()
+    {
+        return !in_array(get_class($this->event), array_get($this->config, 'ignore_events', []));
     }
 
     /**
