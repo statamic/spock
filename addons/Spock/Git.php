@@ -16,7 +16,7 @@ class Git
      * @param mixed $event   The event class that Spock listened for.
      * @param User  $user    The user that triggered the event.
      */
-    public function __construct($config, $event, User $user)
+    public function __construct($config, $event, $user = null)
     {
         $this->config = $config;
         $this->event = $event;
@@ -36,7 +36,10 @@ class Git
             $commands[] = "git add {$path}";
         }
 
-        $commands[] = sprintf("git commit -m '%s by %s'", $this->label(), $this->user->username());
+        $commands[] = vsprintf("git commit -m '%s%s'", [
+            $this->label(),
+            $this->user ? ' by ' . $this->user->username() : ''
+        ]);
 
         if (array_get($this->config, 'git_push')) {
             $commands[] = 'git push';

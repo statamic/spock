@@ -25,6 +25,18 @@ class GitTest extends \PHPUnit_Framework_TestCase
     }
 
     /** @test */
+    function commit_message_from_unauthenticated_user_contains_no_username()
+    {
+        $git = new Git([], new DataSaved, null);
+
+        $this->assertEquals([
+            'git add one.txt',
+            'git add two.txt',
+            "git commit -m 'Data saved'",
+        ], $git->commands());
+    }
+
+    /** @test */
     function git_push_gets_appended_if_specified_in_config()
     {
         $user = Mockery::mock(User::class);

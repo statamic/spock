@@ -75,7 +75,7 @@ class Commander
      * @param User $user
      * @return self
      */
-    public function user(User $user)
+    public function user($user)
     {
         $this->user = $user;
 
