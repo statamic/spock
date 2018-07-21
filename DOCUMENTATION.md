@@ -1,6 +1,6 @@
 ## Installation
 1. Copy the `addons/Spock` directory into `site/addons`.
-2. In `site/settings/addons/spock.yaml`, ensure the `environments` array contains the environment(s) you want Spock commands in. By default, commands are only run in `production`.
+2. Whitelist the environments Spock should be run in. [Read more.](#whitelisting-environments)
 
 ## Commands
 Out of the box, Spock will perform a few git commands to stage, commit, and push any affected files.
@@ -65,6 +65,12 @@ class YourServiceProvider extends ServiceProvider
 ```
 
 ## Whitelisting Environments
-If you will be using the CP to publish content from dev and production, but only want the commands to be run on
-production, you should make sure the `environments` array contains only `production`. Spock will do nothing
-when its running in any other environments.
+Spock will only run commands when it's in a whitelisted environment. By default, Spock will only run in the `production` environment.
+
+You can edit the environments in Spock addon settings area of the Control Panel, or add an `environments` array to `site/settings/addons/spock.yaml`, for example:
+
+``` yaml
+environments:
+  - production
+  - staging
+```
