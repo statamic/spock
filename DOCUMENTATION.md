@@ -1,6 +1,6 @@
 ## Installation
 1. Copy the `addons/Spock` directory into `site/addons`.
-2. In `site/settings/addons/spock.yaml`, ensure the `environments` array contains the environment(s) you want Spock commands in. By default, commands are only run in `production`.
+2. In `site/settings/addons/default.yaml`, ensure the `environments` array contains the environment(s) you want Spock commands in. By default, commands are only run in `production`.
 
 ## Commands
 Out of the box, Spock will perform a few git commands to stage, commit, and push any affected files.
