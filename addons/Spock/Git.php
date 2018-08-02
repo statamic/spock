@@ -36,7 +36,7 @@ class Git
             $commands[] = "git add {$path}";
         }
 
-        $commands[] = vsprintf("git commit -m '%s%s'", [
+        $commands[] = vsprintf('git commit -m "%s%s"', [
             $this->label(),
             $this->user ? ' by ' . $this->user->username() : ''
         ]);
