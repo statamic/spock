@@ -39,6 +39,18 @@ commands_after:
   - another-unix-command
 ```
 
+## Naming Spock's Commits
+
+By default, Spock will commit via the username and email configured in Git (which is usually you).
+
+You can override this by editing the "Git Username" and/or "Git Email" fields in the Spock addon settings area of the Control Panel, or add the variables to your `site/settings/addons/spock.yaml`, for example:
+
+``` yaml
+git_username: Spock
+git_email: spock@domain.com
+```
+
+
 ## Custom commands
 The Git workflow Spock provides out of the box works fine for most people, but if you have special requirements, you may define your own set of commands. You can do this in a service provider like so:
 
