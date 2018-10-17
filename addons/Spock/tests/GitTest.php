@@ -89,6 +89,33 @@ class GitTest extends \PHPUnit_Framework_TestCase
             'echo two',
         ], $git->commands());
     }
+
+    /** @test */
+    function it_adds_username_to_commit_command_if_configured()
+    {
+        $git = new Git(['git_username' => 'Spock'], new DataSaved);
+
+        $this->assertContains('git -c "user.name=Spock" commit -m "Data saved"', $git->commands());
+    }
+
+    /** @test */
+    function it_adds_email_to_commit_command_if_configured()
+    {
+        $git = new Git(['git_email' => 'spock@domain.com'], new DataSaved);
+
+        $this->assertContains('git -c "user.email=spock@domain.com" commit -m "Data saved"', $git->commands());
+    }
+
+    /** @test */
+    function it_adds_email_and_username_to_commit_command_if_configured()
+    {
+        $git = new Git([
+            'git_username' => 'Spock',
+            'git_email' => 'spock@domain.com'
+        ], new DataSaved);
+
+        $this->assertContains('git -c "user.name=Spock" -c "user.email=spock@domain.com" commit -m "Data saved"', $git->commands());
+    }
 }
 
 class DataSaved

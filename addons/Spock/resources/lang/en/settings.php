@@ -9,6 +9,12 @@ return [
     'git_push' => 'Git Push',
     'git_push_instruct' => 'Whether Spock should perform a `git push` after the default git commands.',
 
+    'git_username' => 'Git Username',
+    'git_username_instruct' => "If left blank the default Git user's name is used.",
+
+    'git_email' => 'Git Email',
+    'git_email_instruct' => "If left blank the default Git user's email is used.",
+
     'commands_before' => 'Commands Before',
     'commands_before_instruct' => 'Commands to be run before the default git commands have been executed.',
 

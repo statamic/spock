@@ -36,10 +36,7 @@ class Git
             $commands[] = "git add {$path}";
         }
 
-        $commands[] = vsprintf('git commit -m "%s%s"', [
-            $this->label(),
-            $this->user ? ' by ' . $this->user->username() : ''
-        ]);
+        $commands[] = $this->commitCommand();
 
         if (array_get($this->config, 'git_push')) {
             $commands[] = 'git push';
@@ -50,6 +47,33 @@ class Git
         }
 
         return $commands;
+    }
+
+    /**
+     * Get the git commit command
+     *
+     * eg. The `git commit -m "The message"` bit.
+     *
+     * @return string
+     */
+    protected function commitCommand()
+    {
+        $parts = ['git'];
+
+        if ($username = array_get($this->config, 'git_username')) {
+            $parts[] = sprintf('-c "user.name=%s"', $username);
+        }
+
+        if ($email = array_get($this->config, 'git_email')) {
+            $parts[] = sprintf('-c "user.email=%s"', $email);
+        }
+
+        $message = 'commit -m "' . $this->label();
+        $message .= $this->user ? ' by ' . $this->user->username() : '';
+        $message .= '"';
+        $parts[] = $message;
+
+        return join(' ', $parts);
     }
 
     /**
