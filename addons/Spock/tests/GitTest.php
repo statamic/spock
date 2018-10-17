@@ -20,7 +20,7 @@ class GitTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals([
             'git add one.txt',
             'git add two.txt',
-            "git commit -m 'Data saved by johnsmith'", # Action is the "pretty" version of the class name.
+            'git commit -m "Data saved by johnsmith"', # Action is the "pretty" version of the class name.
         ], $git->commands());
     }
 
@@ -32,7 +32,7 @@ class GitTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals([
             'git add one.txt',
             'git add two.txt',
-            "git commit -m 'Data saved'",
+            'git commit -m "Data saved"',
         ], $git->commands());
     }
 
@@ -47,7 +47,7 @@ class GitTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals([
             'git add one.txt',
             'git add two.txt',
-            "git commit -m 'Data saved by johnsmith'",
+            'git commit -m "Data saved by johnsmith"',
             'git push',
         ], $git->commands());
     }
@@ -67,7 +67,7 @@ class GitTest extends \PHPUnit_Framework_TestCase
             'echo two',
             'git add one.txt',
             'git add two.txt',
-            "git commit -m 'Data saved by johnsmith'",
+            'git commit -m "Data saved by johnsmith"',
         ], $git->commands());
     }
 
@@ -84,7 +84,7 @@ class GitTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals([
             'git add one.txt',
             'git add two.txt',
-            "git commit -m 'Data saved by johnsmith'",
+            'git commit -m "Data saved by johnsmith"',
             'echo one',
             'echo two',
         ], $git->commands());
