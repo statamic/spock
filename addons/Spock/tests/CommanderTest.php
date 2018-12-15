@@ -17,7 +17,8 @@ class CommanderTest extends \PHPUnit_Framework_TestCase
 
         $this->commander = (new Commander($this->log))
             ->config(['environments' => ['production']])
-            ->environment('production');
+            ->environment('production')
+            ->event(new ExampleEvent);
     }
 
     public function tearDown()
