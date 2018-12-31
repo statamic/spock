@@ -32,7 +32,9 @@ class Git
     {
         $commands = array_get($this->config, 'commands_before', []);
 
-        $commands[] = "git add --all";
+        foreach ($this->event->affectedPaths() as $path) {
+            $commands[] = "git add {$path}";
+        }
 
         $commands[] = $this->commitCommand();
 
