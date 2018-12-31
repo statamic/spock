@@ -60,12 +60,12 @@ class Git
 
         if ($username = array_get($this->config, 'git_username')) {
             $parts[] = '-c';
-            $parts[] = escapeshellarg("user.name=" . $username);
+            $parts[] = escapeshellarg('user.name=' . $username);
         }
 
         if ($email = array_get($this->config, 'git_email')) {
             $parts[] = '-c';
-            $parts[] = escapeshellarg("user.email=" . $email);
+            $parts[] = escapeshellarg('user.email=' . $email);
         }
 
         $parts[] = 'commit';
@@ -73,7 +73,7 @@ class Git
             $parts[] = escapeshellarg($this->author());
         }
         $parts[] = '-m';
-        $parts[] = escapeshellarg(sprintf("%s%s", $this->label(), $this->user ? ' by ' . $this->user->username() : ''));
+        $parts[] = escapeshellarg($this->commitMessage());
         return join(' ', $parts);
     }
 
@@ -84,8 +84,21 @@ class Git
      * i.e, "--author=A U Thor <author@example.com>"
      */
     protected function author() {
-        $user = $this->user->toArray();
-        return sprintf("--author=%s <%s>", $user['name'], $user['email']);
+        return sprintf('--author=%s <%s>', $this->user->name(), $this->user->email());
+    }
+
+
+    /**
+     * Generate the commit message
+     *
+     * @return string
+     */
+    protected function commitMessage() {
+        $msg = $this->label();
+        if ($this->user) {
+            $msg .= ' by ' . $this->user->username();
+        }
+        return $msg;
     }
 
 
