@@ -5,9 +5,8 @@ namespace Statamic\Addons\Spock;
 use Statamic\API\User;
 use Statamic\Extend\Listener;
 use Statamic\Contracts\Data\DataEvent;
-use Illuminate\Contracts\Queue\ShouldQueue;
 
-class SpockListener extends Listener implements ShouldQueue
+class SpockListener extends Listener
 {
     /**
      * Spock has no trouble listening for these events with those ears.
