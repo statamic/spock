@@ -2,26 +2,18 @@
 
 namespace Statamic\Addons\Spock;
 
-use Illuminate\Contracts\Logging\Log;
 use Statamic\Contracts\Data\Users\User;
-use Symfony\Component\Process\Exception\ProcessFailedException;
+use Illuminate\Foundation\Bus\DispatchesJobs;
 
 class Commander
 {
-    protected $log;
+    use DispatchesJobs;
+
     protected $user;
     protected $event;
     protected $config = [];
     protected $environment;
     protected $commands = [];
-
-    /**
-     * @param Log $log
-     */
-    public function __construct(Log $log)
-    {
-        $this->log = $log;
-    }
 
     /**
      * Handle execution of the commands.
@@ -35,7 +27,7 @@ class Commander
         }
 
         foreach ($this->commands() as $command) {
-            $this->run($command);
+            $this->queue($command);
         }
     }
 
@@ -161,34 +153,13 @@ class Commander
     }
 
     /**
-     * Run a single command.
+     * Queue a single command.
      *
      * @param Process $command
      * @return void
      */
-    protected function run(Process $command)
+    protected function queue(Process $command)
     {
-        try {
-            $command->run();
-        } catch (ProcessFailedException $e) {
-            $this->logFailedCommand($command, $e);
-        } catch (\Exception $e) {
-            $this->log->error($e);
-        }
-    }
-
-    protected function logFailedCommand($command, $e)
-    {
-        $output = trim($e->getProcess()->getOutput());
-        $output = $output == '' ? 'No output' : "\n$output\n";
-
-        $error = trim($e->getProcess()->getErrorOutput());
-        $error = $error == '' ? 'No error' : "\n$error";
-
-        $this->log->error(vsprintf("Spock command exited unsuccessfully:\nCommand: %s\nOutput: %s\nError: %s", [
-            $command->command(),
-            $output,
-            $error
-        ]));
+        $this->dispatch(new RunProcess($command));
     }
 }
