@@ -15,6 +15,14 @@ class CommanderTest extends \PHPUnit_Framework_TestCase
 
         $this->log = Mockery::spy(Log::class);
 
+        app()->bind('log', function ($app) {
+            return $this->log;
+        });
+
+        app()->bind('Illuminate\Contracts\Bus\Dispatcher', function ($app) {
+            return new FakeDispatcher;
+        });
+
         $this->commander = (new Commander($this->log))
             ->config(['environments' => ['production']])
             ->environment('production')
@@ -190,4 +198,12 @@ class ExampleEvent
 class ExampleIgnoredEvent
 {
     //
+}
+
+class FakeDispatcher
+{
+    public function dispatch($job)
+    {
+        $job->handle();
+    }
 }

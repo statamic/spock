@@ -32,7 +32,7 @@ class RunProcess implements ShouldQueue, SelfHandling
         } catch (ProcessFailedException $e) {
             $this->logFailedCommand($this->command, $e);
         } catch (\Exception $e) {
-            \Log::error($e);
+            app('log')->error($e);
         }
     }
 
@@ -50,7 +50,7 @@ class RunProcess implements ShouldQueue, SelfHandling
         $error = trim($e->getProcess()->getErrorOutput());
         $error = $error == '' ? 'No error' : "\n$error";
 
-        \Log::error(vsprintf("Spock command exited unsuccessfully:\nCommand: %s\nOutput: %s\nError: %s", [
+        app('log')->error(vsprintf("Spock command exited unsuccessfully:\nCommand: %s\nOutput: %s\nError: %s", [
             $command->command(),
             $output,
             $error
