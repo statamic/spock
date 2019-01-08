@@ -22,13 +22,11 @@ class Commander
      */
     public function handle()
     {
-        if (!$this->shouldRunCommands()) {
+        if (! $this->shouldRunCommands()) {
             return;
         }
 
-        foreach ($this->commands() as $command) {
-            $this->queue($command);
-        }
+        $this->dispatch(new RunProcesses($this->commands()));
     }
 
     /**
@@ -150,16 +148,5 @@ class Commander
     protected function defaultCommands()
     {
         return (new Git($this->config, $this->event, $this->user))->commands();
-    }
-
-    /**
-     * Queue a single command.
-     *
-     * @param Process $command
-     * @return void
-     */
-    protected function queue(Process $command)
-    {
-        $this->dispatch(new RunProcess($command));
     }
 }

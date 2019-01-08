@@ -6,31 +6,41 @@ use Illuminate\Contracts\Bus\SelfHandling;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 
-class RunProcess implements ShouldQueue, SelfHandling
+class RunProcesses implements ShouldQueue, SelfHandling
 {
-    protected $command;
+    protected $commands;
 
     /**
      * Create a new job instance.
      *
-     * @return void
+     * @param array $commands
      */
-    public function __construct(Process $command)
+    public function __construct(array $commands)
     {
-        $this->command = $command;
+        $this->commands = $commands;
     }
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
     public function handle()
     {
+        foreach ($this->commands as $command) {
+            $this->run($command);
+        }
+    }
+
+    /**
+     * Run individual command.
+     *
+     * @param Process $command
+     */
+    public function run(Process $command)
+    {
         try {
-            $this->command->run();
+            $command->run();
         } catch (ProcessFailedException $e) {
-            $this->logFailedCommand($this->command, $e);
+            $this->logFailedCommand($command, $e);
         } catch (\Exception $e) {
             app('log')->error($e);
         }
