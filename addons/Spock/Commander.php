@@ -95,11 +95,21 @@ class Commander
         return $this->isEnvironmentAllowed() && $this->isEventAllowed();
     }
 
+    /**
+     * Is environment allowed?
+     *
+     * @return bool
+     */
     protected function isEnvironmentAllowed()
     {
         return in_array($this->environment, array_get($this->config, 'environments', []));
     }
 
+    /**
+     * Is event allowed?
+     *
+     * @return bool
+     */
     protected function isEventAllowed()
     {
         return !in_array(get_class($this->event), array_get($this->config, 'ignore_events', []));
