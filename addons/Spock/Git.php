@@ -86,7 +86,8 @@ class Git
      * i.e, "--author=A U Thor <author@example.com>"
      */
     protected function author() {
-        return sprintf('--author=%s <%s>', $this->user->name(), $this->user->email());
+        $user = $this->user->toArray();
+        return sprintf("--author=%s <%s>", $user['name'], $user['email']);
     }
 
 
