@@ -1,8 +1,10 @@
 ## Installation
+
 1. Copy the `addons/Spock` directory into `site/addons`.
 2. Whitelist the environments Spock should be run in. [Read more.](#whitelisting-environments)
 
 ## Commands
+
 Out of the box, Spock will perform a few git commands to stage, commit, and push any affected files.
 
 Basically, it will do this:
@@ -52,6 +54,7 @@ git_email: spock@domain.com
 
 
 ## Custom commands
+
 The Git workflow Spock provides out of the box works fine for most people, but if you have special requirements, you may define your own set of commands. You can do this in a service provider like so:
 
 ``` php
@@ -66,7 +69,7 @@ class YourServiceProvider extends ServiceProvider
         app('spock')->setCommands(['command one', 'command two']);
 
         // A closure that returns an array of commands.
-        // The first argument will be an instance of the `Commander` class. 
+        // The first argument will be an instance of the `Commander` class.
         app('spock')->setCommands(function ($spock) {
             $paths = $spock->event()->affectedPaths();
             //
@@ -77,6 +80,7 @@ class YourServiceProvider extends ServiceProvider
 ```
 
 ## Whitelisting Environments
+
 Spock will only run commands when it's in a whitelisted environment. By default, Spock will only run in the `production` environment.
 
 You can edit the environments in Spock addon settings area of the Control Panel, or add an `environments` array to `site/settings/addons/spock.yaml`, for example:
@@ -86,3 +90,12 @@ environments:
   - production
   - staging
 ```
+
+## Queueing Commands
+
+Spock automatically queues commands to run in the background when you have a queue driver set.  This can be helpful if you have git set to automatically push, or if you are running any commands that take time to execute, causing your users to experience wait time.  To setup a queue in your statamic app:
+
+1. Ensure [Redis](https://redis.io/) is installed and running on your server.
+2. Add `QUEUE_DRIVER=redis` to your `.env` file. [What’s an .env file?](https://docs.statamic.com/environments)
+3. Run `php please queue:listen`.
+
