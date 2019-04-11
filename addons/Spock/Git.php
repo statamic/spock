@@ -33,6 +33,7 @@ class Git
         $commands = array_get($this->config, 'commands_before', []);
 
         foreach ($this->event->affectedPaths() as $path) {
+            $path = escapeshellarg($path);
             $commands[] = "git add {$path}";
         }
 
