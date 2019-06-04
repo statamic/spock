@@ -18,8 +18,8 @@ class GitTest extends \PHPUnit_Framework_TestCase
         $git = new Git([], new DataSaved, $user);
 
         $this->assertEquals([
-            'git add one.txt',
-            'git add two.txt',
+            'git add \'one.txt\'',
+            'git add \'two.txt\'',
             'git commit -m "Data saved by johnsmith"', # Action is the "pretty" version of the class name.
         ], $git->commands());
     }
@@ -30,8 +30,8 @@ class GitTest extends \PHPUnit_Framework_TestCase
         $git = new Git([], new DataSaved, null);
 
         $this->assertEquals([
-            'git add one.txt',
-            'git add two.txt',
+            'git add \'one.txt\'',
+            'git add \'two.txt\'',
             'git commit -m "Data saved"',
         ], $git->commands());
     }
@@ -45,8 +45,8 @@ class GitTest extends \PHPUnit_Framework_TestCase
         $git = new Git(['git_push' => true], new DataSaved, $user);
 
         $this->assertEquals([
-            'git add one.txt',
-            'git add two.txt',
+            'git add \'one.txt\'',
+            'git add \'two.txt\'',
             'git commit -m "Data saved by johnsmith"',
             'git push',
         ], $git->commands());
@@ -65,8 +65,8 @@ class GitTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals([
             'echo one',
             'echo two',
-            'git add one.txt',
-            'git add two.txt',
+            'git add \'one.txt\'',
+            'git add \'two.txt\'',
             'git commit -m "Data saved by johnsmith"',
         ], $git->commands());
     }
@@ -82,8 +82,8 @@ class GitTest extends \PHPUnit_Framework_TestCase
         ], new DataSaved, $user);
 
         $this->assertEquals([
-            'git add one.txt',
-            'git add two.txt',
+            'git add \'one.txt\'',
+            'git add \'two.txt\'',
             'git commit -m "Data saved by johnsmith"',
             'echo one',
             'echo two',
