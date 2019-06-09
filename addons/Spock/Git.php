@@ -62,20 +62,49 @@ class Git
         $parts = ['git'];
 
         if ($username = array_get($this->config, 'git_username')) {
-            $parts[] = sprintf('-c "user.name=%s"', $username);
+            $parts[] = '-c';
+            $parts[] = escapeshellarg('user.name=' . $username);
         }
 
         if ($email = array_get($this->config, 'git_email')) {
-            $parts[] = sprintf('-c "user.email=%s"', $email);
+            $parts[] = '-c';
+            $parts[] = escapeshellarg('user.email=' . $email);
         }
 
-        $message = 'commit -m "' . $this->label();
-        $message .= $this->user ? ' by ' . $this->user->username() : '';
-        $message .= '"';
-        $parts[] = $message;
-
+        $parts[] = 'commit';
+        if ($this->user) {
+            $parts[] = escapeshellarg($this->author());
+        }
+        $parts[] = '-m';
+        $parts[] = escapeshellarg($this->commitMessage());
         return join(' ', $parts);
     }
+
+
+
+    /**
+     * Create a Git author parameter from the user's name and email address,
+     * i.e, "--author=A U Thor <author@example.com>"
+     */
+    protected function author() {
+        $user = $this->user->toArray();
+        return sprintf("--author=%s <%s>", $user['name'], $user['email']);
+    }
+
+
+    /**
+     * Generate the commit message
+     *
+     * @return string
+     */
+    protected function commitMessage() {
+        $msg = $this->label();
+        if ($this->user) {
+            $msg .= ' by ' . $this->user->username();
+        }
+        return $msg;
+    }
+
 
     /**
      * Get the label of the class, which is the action name.
