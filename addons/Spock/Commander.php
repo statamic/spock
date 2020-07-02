@@ -92,7 +92,7 @@ class Commander
      */
     public function shouldRunCommands()
     {
-        return $this->isEnvironmentAllowed() && $this->isEventAllowed();
+        return $this->isEnvironmentAllowed() && $this->isEventAllowed() && $this->isEventAffectingFiles();
     }
 
     /**
@@ -113,6 +113,16 @@ class Commander
     protected function isEventAllowed()
     {
         return !in_array(get_class($this->event), array_get($this->config, 'ignore_events', []));
+    }
+    
+    /**
+     * Is event changing files?
+     *
+     * @return bool
+     */
+    protected function isEventAffectingFiles()
+    {
+        return !empty($this->event->affectedPaths());
     }
 
     /**
